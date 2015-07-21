@@ -1,6 +1,6 @@
 package hms.ajuba.menu_designer_app.adapter;
 
-import android.content.Context;
+import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -11,6 +11,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.gson.internal.LinkedTreeMap;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
@@ -22,13 +23,13 @@ import hms.ajuba.menu_designer_app.util.OptionsUtil;
 
 public class MenuAdapter extends RecyclerView.Adapter<MenuViewHolder> {
     private ArrayList<Option> optionList;
-    private Context context;
+    private Activity activity;
     private MenuAdapter adapter;
     private Stack<ArrayList<Option>> menuListStack;
 
-    public MenuAdapter(Context context, ArrayList<Option> optionList) {
+    public MenuAdapter(Activity activity, ArrayList<Option> optionList) {
         this.optionList = optionList;
-        this.context = context;
+        this.activity = activity;
         this.adapter = this;
         this.menuListStack = new Stack<>();
     }
@@ -56,10 +57,19 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuViewHolder> {
             @Override
             public void onClick(View view) {
                 Option clickedOption = (Option) view.getTag();
-                menuListStack.push((ArrayList<Option>) optionList.clone());
-                optionList.clear();
-                optionList = OptionsUtil.getNextList(clickedOption.getOptionsMap());
-                adapter.notifyDataSetChanged();
+                if (!clickedOption.isLastOption()) {
+                    menuListStack.push((ArrayList<Option>) optionList.clone());
+                    optionList.clear();
+                    optionList = OptionsUtil.getNextList(clickedOption.getOptionsMap());
+                    if (optionList.isEmpty()) {
+                        Option backOption = new Option("Back", new LinkedTreeMap<String, LinkedTreeMap>());
+                        backOption.setIsLastOption(true);
+                        optionList.add(backOption);
+                    }
+                    adapter.notifyDataSetChanged();
+                } else {
+                    OptionsUtil.handleBackEvent(adapter, activity);
+                }
             }
         };
 
@@ -69,7 +79,11 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuViewHolder> {
         textView.setTag(option);
         imageView.setTag(option);
 
-        Animation animation = AnimationUtils.loadAnimation(context, R.anim.fom_left_to_right);
+        animate(holder);
+    }
+
+    private void animate(MenuViewHolder holder) {
+        Animation animation = AnimationUtils.loadAnimation(activity, R.anim.fom_left_to_right);
         View itemView = holder.itemView;
         itemView.startAnimation(animation);
     }

@@ -77,20 +77,7 @@ public class MainActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        handleBackEvent();
-    }
-
-    private void handleBackEvent() {
-        Stack<ArrayList<Option>> menuListStack = adapter.getMenuListStack();
-        if (menuListStack.size() != 0) {
-            adapter.setOptionList(menuListStack.pop());
-            adapter.notifyDataSetChanged();
-            if(menuListStack.size() == 1){
-                txtTitle.setText(rootTitle);
-            }
-        } else {
-            finish();
-        }
+        OptionsUtil.handleBackEvent(adapter, this);
     }
 
     private class GetJsonTask extends AsyncTask<Void, Void, LinkedTreeMap<String, LinkedTreeMap>> {

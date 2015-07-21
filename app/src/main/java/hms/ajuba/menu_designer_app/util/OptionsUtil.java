@@ -1,15 +1,20 @@
 package hms.ajuba.menu_designer_app.util;
 
+import android.app.Activity;
+
 import com.google.gson.internal.LinkedTreeMap;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.TreeMap;
+import java.util.Stack;
 
+import hms.ajuba.menu_designer_app.adapter.MenuAdapter;
 import hms.ajuba.menu_designer_app.pojo.Option;
 
 public class OptionsUtil {
+
+    private static boolean isLastOption = false;
 
     public static ArrayList<Option> getNextList(LinkedTreeMap<String, LinkedTreeMap> optionsMap) {
         ArrayList<Option> menuList = new ArrayList<>();
@@ -23,5 +28,15 @@ public class OptionsUtil {
             menuList.add(option);
         }
         return menuList;
+    }
+
+    public static void handleBackEvent(MenuAdapter adapter, Activity activity) {
+        Stack<ArrayList<Option>> menuListStack = adapter.getMenuListStack();
+        if (menuListStack.size() != 0) {
+            adapter.setOptionList(menuListStack.pop());
+            adapter.notifyDataSetChanged();
+        } else {
+            activity.finish();
+        }
     }
 }
