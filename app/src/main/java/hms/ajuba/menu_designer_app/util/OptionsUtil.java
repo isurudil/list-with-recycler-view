@@ -14,8 +14,6 @@ import hms.ajuba.menu_designer_app.pojo.Option;
 
 public class OptionsUtil {
 
-    private static boolean isLastOption = false;
-
     public static ArrayList<Option> getNextList(LinkedTreeMap<String, LinkedTreeMap> optionsMap) {
         ArrayList<Option> menuList = new ArrayList<>();
         Iterator iterator = optionsMap.entrySet().iterator();
@@ -24,7 +22,8 @@ public class OptionsUtil {
             LinkedTreeMap linkedTreeMap = (LinkedTreeMap) next.getValue();
             LinkedTreeMap nameTree = (LinkedTreeMap) linkedTreeMap.values().toArray()[0];
             String name = (String) nameTree.values().toArray()[0];
-            Option option = new Option(name, (LinkedTreeMap<String, LinkedTreeMap>) linkedTreeMap.get("options"));
+            String title = (String) ((LinkedTreeMap)linkedTreeMap.values().toArray()[4]).get("en");
+            Option option = new Option(name, title, (LinkedTreeMap<String, LinkedTreeMap>) linkedTreeMap.get("options"));
             menuList.add(option);
         }
         return menuList;

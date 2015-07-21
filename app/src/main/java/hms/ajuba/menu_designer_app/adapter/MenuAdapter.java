@@ -15,7 +15,6 @@ import com.google.gson.internal.LinkedTreeMap;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
-import java.util.Random;
 import java.util.Stack;
 
 import hms.ajuba.menu_designer_app.R;
@@ -27,12 +26,16 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuViewHolder> {
     private Activity activity;
     private MenuAdapter adapter;
     private Stack<ArrayList<Option>> menuListStack;
+    private ArrayList<String> headerList;
+    private TextView txtHeader;
 
-    public MenuAdapter(Activity activity, ArrayList<Option> optionList) {
+    public MenuAdapter(Activity activity, ArrayList<Option> optionList, TextView txtHeader) {
         this.optionList = optionList;
         this.activity = activity;
         this.adapter = this;
         this.menuListStack = new Stack<>();
+        this.txtHeader = txtHeader;
+        this.headerList = new ArrayList<>();
     }
 
     @Override
@@ -58,18 +61,24 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuViewHolder> {
             @Override
             public void onClick(View view) {
                 Option clickedOption = (Option) view.getTag();
+                String selectedHeader = clickedOption.getHeader();
                 if (!clickedOption.isLastOption()) {
+                    txtHeader.setText(selectedHeader);
+                    headerList.add(selectedHeader);
                     menuListStack.push((ArrayList<Option>) optionList.clone());
                     optionList.clear();
                     optionList = OptionsUtil.getNextList(clickedOption.getOptionsMap());
                     if (optionList.isEmpty()) {
-                        Option backOption = new Option("Back", new LinkedTreeMap<String, LinkedTreeMap>());
+                        Option backOption = new Option("Back", clickedOption.getTitle(), new LinkedTreeMap<String, LinkedTreeMap>());
+                        txtHeader.setText( clickedOption.getTitle());
                         backOption.setIsLastOption(true);
                         optionList.add(backOption);
                     }
                     adapter.notifyDataSetChanged();
                 } else {
                     OptionsUtil.handleBackEvent(adapter, activity);
+                    txtHeader.setText(headerList.get(headerList.size() - 2));
+                    headerList.remove(headerList.size() - 2);
                 }
             }
         };
@@ -86,7 +95,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuViewHolder> {
     private void setRandomImage(ImageLoader imageLoader, ImageView imageView) {
         int random = (int) (Math.random() * 10);
         String imgUri;
-        switch (random){
+        switch (random) {
             case 1:
                 imgUri = "drawable://" + R.drawable.img1;
                 break;
@@ -138,5 +147,13 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuViewHolder> {
 
     public void setOptionList(ArrayList<Option> optionList) {
         this.optionList = optionList;
+    }
+
+    public ArrayList<String> getHeaderList() {
+        return headerList;
+    }
+
+    public void setHeaderList(ArrayList<String> headerList) {
+        this.headerList = headerList;
     }
 }

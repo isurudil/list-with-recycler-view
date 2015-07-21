@@ -21,10 +21,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Stack;
-import java.util.TreeMap;
 
 import hms.ajuba.menu_designer_app.R;
 import hms.ajuba.menu_designer_app.adapter.MenuAdapter;
@@ -41,7 +37,7 @@ public class MainActivity extends Activity {
     private ProgressBar progressBar;
     private RecyclerView recyclerView;
     private MenuAdapter adapter;
-    private TextView txtTitle;
+    private TextView txtHeader;
     private String rootTitle;
 
     @Override
@@ -61,7 +57,7 @@ public class MainActivity extends Activity {
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        txtTitle = (TextView) findViewById(R.id.txt_header);
+        txtHeader = (TextView) findViewById(R.id.txt_header);
     }
 
     private void initImageLoader() {
@@ -70,14 +66,21 @@ public class MainActivity extends Activity {
                 .cacheOnDisk(true)
                 .build();
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getApplicationContext())
-        .defaultDisplayImageOptions(defaultOptions)
-        .build();
+                .defaultDisplayImageOptions(defaultOptions)
+                .build();
         ImageLoader.getInstance().init(config);
     }
 
     @Override
     public void onBackPressed() {
         OptionsUtil.handleBackEvent(adapter, this);
+        ArrayList<String> headerList = adapter.getHeaderList();
+        if (headerList.size() > 1) {
+            txtHeader.setText(headerList.get(headerList.size() - 2));
+            headerList.remove(headerList.size() - 2);
+        } else {
+            finish();
+        }
     }
 
     private class GetJsonTask extends AsyncTask<Void, Void, LinkedTreeMap<String, LinkedTreeMap>> {
@@ -101,10 +104,11 @@ public class MainActivity extends Activity {
 
         @Override
         protected void onPostExecute(LinkedTreeMap<String, LinkedTreeMap> optionsMap) {
-            txtTitle.setText(rootTitle);
+            txtHeader.setText(rootTitle);
             progressBar.setVisibility(View.GONE);
             ArrayList<Option> nextList = OptionsUtil.getNextList(optionsMap);
-            adapter = new MenuAdapter(MainActivity.this, nextList);
+            adapter = new MenuAdapter(MainActivity.this, nextList, txtHeader);
+            adapter.getHeaderList().add(rootTitle);
             recyclerView.setAdapter(adapter);
         }
     }
