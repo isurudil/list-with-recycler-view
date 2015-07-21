@@ -69,7 +69,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuViewHolder> {
         textView.setTag(option);
         imageView.setTag(option);
 
-        Animation animation = AnimationUtils.loadAnimation(context, R.anim.down_from_top);
+        Animation animation = AnimationUtils.loadAnimation(context, R.anim.fom_left_to_right);
         View itemView = holder.itemView;
         itemView.startAnimation(animation);
     }

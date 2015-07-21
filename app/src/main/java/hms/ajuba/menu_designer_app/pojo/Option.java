@@ -1,12 +1,12 @@
 package hms.ajuba.menu_designer_app.pojo;
 
-import java.util.Map;
+import com.google.gson.internal.LinkedTreeMap;
 
 public class Option {
     private String title;
-    private Map<String, Map> optionsMap;
+    private LinkedTreeMap<String, LinkedTreeMap> optionsMap;
 
-    public Option(String title, Map<String, Map> optionsMap) {
+    public Option(String title, LinkedTreeMap<String, LinkedTreeMap> optionsMap) {
         this.title = title;
         this.optionsMap = optionsMap;
     }
@@ -20,7 +20,7 @@ public class Option {
     }
 
 
-    public Map<String, Map> getOptionsMap() {
+    public LinkedTreeMap<String, LinkedTreeMap> getOptionsMap() {
         return optionsMap;
     }
 }

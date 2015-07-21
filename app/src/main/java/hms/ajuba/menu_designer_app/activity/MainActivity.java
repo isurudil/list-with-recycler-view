@@ -11,6 +11,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.google.gson.internal.LinkedTreeMap;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
+import java.util.TreeMap;
 
 import hms.ajuba.menu_designer_app.R;
 import hms.ajuba.menu_designer_app.adapter.MenuAdapter;
@@ -35,7 +37,7 @@ import hms.ajuba.menu_designer_app.util.PropertyLoader;
 
 public class MainActivity extends Activity {
 
-    private Map optionsMap;
+    private LinkedTreeMap optionsMap;
     private ProgressBar progressBar;
     private RecyclerView recyclerView;
     private MenuAdapter adapter;
@@ -91,10 +93,10 @@ public class MainActivity extends Activity {
         }
     }
 
-    private class GetJsonTask extends AsyncTask<Void, Void, Map<String, Map>> {
+    private class GetJsonTask extends AsyncTask<Void, Void, LinkedTreeMap<String, LinkedTreeMap>> {
 
         @Override
-        protected Map<String, Map> doInBackground(Void... voids) {
+        protected LinkedTreeMap<String, LinkedTreeMap> doInBackground(Void... voids) {
             String jsonResponse;
             ObjectMapper mapper = new ObjectMapper();
             try {
@@ -103,7 +105,7 @@ public class MainActivity extends Activity {
                 JsonNode menuItemNode = rootNode.path("menuStructure").path("menuItem");
                 JsonNode optionsNode = menuItemNode.path("options");
                 rootTitle = menuItemNode.path("header").path("en").getTextValue();
-                optionsMap = new Gson().fromJson(optionsNode.toString(), HashMap.class);
+                optionsMap = new Gson().fromJson(optionsNode.toString(), LinkedTreeMap.class);
             } catch (ConnectionFailureException | IOException e) {
                 Log.e("MD", "Error occurred", e);
             }
@@ -111,7 +113,7 @@ public class MainActivity extends Activity {
         }
 
         @Override
-        protected void onPostExecute(Map<String, Map> optionsMap) {
+        protected void onPostExecute(LinkedTreeMap<String, LinkedTreeMap> optionsMap) {
             txtTitle.setText(rootTitle);
             progressBar.setVisibility(View.GONE);
             ArrayList<Option> nextList = OptionsUtil.getNextList(optionsMap);
