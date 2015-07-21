@@ -15,6 +15,7 @@ import com.google.gson.internal.LinkedTreeMap;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Stack;
 
 import hms.ajuba.menu_designer_app.R;
@@ -49,7 +50,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuViewHolder> {
         ImageView imageView = holder.getImageView();
         TextView textView = holder.getTextView();
 
-        imageLoader.displayImage("http://oi39.tinypic.com/33zb76p.jpg", imageView);
+        setRandomImage(imageLoader, imageView);
 
         textView.setText(Html.fromHtml(option.getTitle()));
 
@@ -80,6 +81,44 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuViewHolder> {
         imageView.setTag(option);
 
         animate(holder);
+    }
+
+    private void setRandomImage(ImageLoader imageLoader, ImageView imageView) {
+        int random = (int) (Math.random() * 10);
+        String imgUri;
+        switch (random){
+            case 1:
+                imgUri = "drawable://" + R.drawable.img1;
+                break;
+            case 2:
+                imgUri = "drawable://" + R.drawable.img2;
+                break;
+            case 3:
+                imgUri = "drawable://" + R.drawable.img3;
+                break;
+            case 4:
+                imgUri = "drawable://" + R.drawable.img4;
+                break;
+            case 5:
+                imgUri = "drawable://" + R.drawable.img5;
+                break;
+            case 6:
+                imgUri = "drawable://" + R.drawable.img6;
+                break;
+            case 7:
+                imgUri = "drawable://" + R.drawable.img7;
+                break;
+            case 8:
+                imgUri = "drawable://" + R.drawable.img8;
+                break;
+            case 9:
+                imgUri = "drawable://" + R.drawable.img9;
+                break;
+            default:
+                imgUri = "drawable://" + R.drawable.img10;
+                break;
+        }
+        imageLoader.displayImage(imgUri, imageView);
     }
 
     private void animate(MenuViewHolder holder) {
